@@ -2,23 +2,23 @@
 #include <stack>
 #include <vector>
 
-void DFS1(size_t vertex, const std::vector<std::vector<size_t>>& graph, std::vector<bool>& used, std::stack<size_t>& order) {
+void DFSGraph(size_t vertex, const std::vector<std::vector<size_t>>& graph, std::vector<bool>& used, std::stack<size_t>& order) {
     used[vertex] = true;
-    for(auto& i: graph[vertex]) {
-        if(!used[i]) {
-            DFS1(i, graph, used, order);
+    for(auto& neighbour: graph[vertex]) {
+        if(!used[neighbour]) {
+            DFSGraph(neighbour, graph, used, order);
         }
     }
     order.push(vertex);
 }
 
 
-void DFS2(size_t vertex, const std::vector<std::vector<size_t>>& graph_t, std::vector<bool>& used, std::vector<size_t>& components, size_t current_component) {
+void DFSTrGraph(size_t vertex, const std::vector<std::vector<size_t>>& graph_t, std::vector<bool>& used, std::vector<size_t>& components, size_t current_component) {
     components[vertex] = current_component;
     used[vertex] = true;
     for(auto& i: graph_t[vertex]) {
         if(!used[i]) {
-            DFS2(i, graph_t, used, components, current_component);
+            DFSTrGraph(i, graph_t, used, components, current_component);
         }
     }
 }
@@ -28,7 +28,7 @@ std::vector<size_t> Kosaraju(const std::vector<std::vector<size_t>>& graph, cons
     std::stack<size_t> order;
     for(size_t i = 0; i < graph.size(); ++i) {
         if(!used[i]) {
-            DFS1(i, graph, used, order);
+            DFSGraph(i, graph, used, order);
         }
     }
     used.assign(graph.size(), false);
@@ -37,7 +37,7 @@ std::vector<size_t> Kosaraju(const std::vector<std::vector<size_t>>& graph, cons
     for(; !order.empty(); order.pop()) {
         size_t vertex = order.top();
         if(!used[vertex]) {
-            DFS2(vertex, graph_t, used, components, component);
+            DFSTrGraph(vertex, graph_t, used, components, component);
             component++;
         }
     }
@@ -66,5 +66,3 @@ int main() {
         std:: cout << ' ';
     }
 }
-
-
