@@ -15,9 +15,9 @@ void DFSGraph(size_t vertex, const std::vector<std::vector<size_t>>& graph, std:
 void DFSExploreComponent(size_t vertex, const std::vector<std::vector<size_t>>& graph_t, std::vector<bool>& used, std::vector<size_t>& components, size_t current_component) {
     components[vertex] = current_component;
     used[vertex] = true;
-    for (auto& i : graph_t[vertex]) {
-        if (!used[i]) {
-            DFSExploreComponent(i, graph_t, used, components, current_component);
+    for (auto& adjacent_vertex : graph_t[vertex]) {
+        if (!used[adjacent_vertex]) {
+            DFSExploreComponent(adjacent_vertex, graph_t, used, components, current_component);
         }
     }
 }
@@ -49,11 +49,11 @@ void getInput(std::istream& in, size_t& n, size_t& m, std::vector<std::vector<si
     in >> n >> m;
     graph.resize(n);
     graph_t.resize(n);
-    size_t a, b;
+    size_t from, to;
     for (size_t i = 0; i < m; ++i) {
-        in >> a >> b;
-        graph[a - 1].push_back(b - 1);
-        graph_t[b - 1].push_back(a - 1);
+        in >> from >> to;
+        graph[from - 1].push_back(to - 1);
+        graph_t[to - 1].push_back(from - 1);
     }
 }
 
