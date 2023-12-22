@@ -1,7 +1,7 @@
-#include <iostream>
-#include <vector>
-#include <queue>
 #include <climits>
+#include <iostream>
+#include <queue>
+#include <vector>
 
 void setEdge(std::vector<std::vector<std::pair<size_t, size_t>>>& edges, size_t v_from, size_t v_to, size_t v_cost) {
     edges[v_from].emplace_back(v_to, v_cost);
@@ -36,38 +36,53 @@ const std::vector<size_t>& calculatePath(std::vector<std::vector<std::pair<size_
     return distances;
 }
 
-int main() {
-    size_t vertex_count, edge_count, infection_count;
-    std::cin >> vertex_count >> edge_count >> infection_count;
+void getInput(std::istream& in, size_t& vertex_count, size_t& edge_count, size_t& infection_count,
+              std::vector<size_t>& infection_points,
+              std::vector<std::vector<std::pair<size_t, size_t>>>& edges) {
+    in >> vertex_count >> edge_count >> infection_count;
 
-    std::vector<std::vector<std::pair<size_t, size_t>>> edges(vertex_count);
-    std::vector<size_t> distances(vertex_count, LLONG_MAX);
+    edges.resize(vertex_count);
 
     size_t v_from, v_to, v_cost;
-    std::vector<size_t> infection_points;
     for (size_t i = 0; i < infection_count; ++i) {
-        std::cin >> v_from;
+        in >> v_from;
         infection_points.push_back(v_from - 1);
     }
 
     for (size_t i = 0; i < edge_count; ++i) {
-        std::cin >> v_from >> v_to >> v_cost;
+        in >> v_from >> v_to >> v_cost;
         setEdge(edges, v_from - 1, v_to - 1, v_cost);
     }
+}
+
+void getStartFinishVertices(std::istream& in, size_t& start_vertex, size_t& finish_vertex) {
+    in >> start_vertex >> finish_vertex;
+}
+
+void displayResult(std::ostream& out, size_t answer) {
+    out << answer << std::endl;
+}
+
+int main() {
+    size_t vertex_count, edge_count, infection_count;
+    std::vector<size_t> infection_points;
+    std::vector<std::vector<std::pair<size_t, size_t>>> edges;
+    getInput(std::cin, vertex_count, edge_count, infection_count, infection_points, edges);
 
     size_t start_vertex, finish_vertex;
-    std::cin >> start_vertex >> finish_vertex;
+    getStartFinishVertices(std::cin, start_vertex, finish_vertex);
 
+    std::vector<size_t> distances(vertex_count, LLONG_MAX);
     auto distances_result = calculatePath(edges, distances, finish_vertex - 1, start_vertex - 1);
     size_t answer = distances_result[start_vertex - 1];
 
     for (const auto& infection_point : infection_points) {
         if (distances_result[infection_point] <= answer) {
-            std::cout << -1;
+            displayResult(std::cout, -1);
             return 0;
         }
     }
 
-    std::cout << answer;
+    displayResult(std::cout, answer);
     return 0;
 }
